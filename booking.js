@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
           editRow.cells[3].textContent = petType;
           editRow = null; 
       } else {
-          
+        
           addRecord(name, email, number, petType);
       }
 

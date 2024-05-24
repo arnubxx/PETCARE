@@ -24,7 +24,7 @@ header{
     align-items: center;
     background-color: #618264;
     padding:20px 10px;
- flex-wrap: wrap;
+    flex-wrap: wrap;
 }
 .nlinks li{
     display:inline-block;

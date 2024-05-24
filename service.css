@@ -42,7 +42,7 @@
         padding: 10px 20px;
         background:white;
         border-radius: 20px;
-     
+        
 }
 .btn2:hover{
     text-decoration: underline;
@@ -50,7 +50,7 @@
 
 
 
-/* responsive */
+
 
 @media (max-width: 600px) {
     .description {
