@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Application</title>
+    <link rel="stylesheet" href="booking.css">
+</head>
+<body>
+    <div class="container">
+        <h2>BOOKING</h2>
+        <form id="crudForm">
+            <input type="text" id="name" placeholder="Enter Name" required>
+            <input type="email" id="email" placeholder="Enter Email" required>
+            <input type="tel" id="number" placeholder="Enter Number" required>
+            <input type="text" id="petType" placeholder="Enter Pet Type" required>
+            <button type="submit">Add Record</button>
+        </form>
+        <table id="recordTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Number</th>
+                    <th>Pet Type</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="recordTableBody">
+                <!-- Records will be appended here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script src="booking.js"></script>
+</body>
+</html>

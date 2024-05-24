@@ -1,0 +1,78 @@
+.service2{
+    background-color: #7AB2B2;
+    height: auto;
+}
+
+.description{
+       padding-top: 60px;
+    text-align: center;
+    line-height: 1.8;
+}
+.description h1{
+    font-size: 4rem;
+}
+
+.book {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+   
+    
+  }
+
+  .sevice-details{
+    color: white;
+    font-weight: bold;
+           border: 1px solid black;
+      height: 100px;
+      width:50%;
+      display: flex;
+      justify-content: space-around;
+      background-color: #C40C0C;
+      align-items: center;
+      margin-bottom: 20px;
+  }
+.btn2{
+
+    
+        text-decoration: none;
+        color: #C40C0C;
+        padding: 10px 20px;
+        background:white;
+        border-radius: 20px;
+     
+}
+.btn2:hover{
+    text-decoration: underline;
+}
+
+
+
+/* responsive */
+
+@media (max-width: 600px) {
+    .description {
+      padding-top: 40px; 
+      line-height: 1.6; 
+    }
+  
+    .description h1 {
+      font-size: 2.5rem; 
+    }
+
+    .sevice-details {
+       
+        height: 80px;
+        width: 90%;
+      
+        flex-wrap: wrap;
+       
+      }
+
+      .btn2{
+        padding: 8px 16px;
+        width: fit-content;
+      }
+  }
