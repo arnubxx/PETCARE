@@ -33,9 +33,10 @@
       background-color: #C40C0C;
       align-items: center;
       margin-bottom: 20px;
+      border-radius: 15px;
   }
 .btn2{
-
+  
     
         text-decoration: none;
         color: #C40C0C;
