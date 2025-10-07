@@ -47,7 +47,6 @@ document.addEventListener('DOMContentLoaded', function () {
           document.getElementById('email').value = rowData[1].textContent;
           document.getElementById('number').value = rowData[2].textContent;
           document.getElementById('petType').value = rowData[3].textContent;
-
           
           editRow = newRow;
       });
