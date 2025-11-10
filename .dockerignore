@@ -1,5 +1,4 @@
 # Ignore unnecessary files for Docker build
-target/
 .git/
 .gitignore
 README.md
@@ -9,3 +8,6 @@ README.md
 *.iml
 .vscode/
 node_modules/
+scripts/
+target/
+!target/PETCARE-1.0.0.war
