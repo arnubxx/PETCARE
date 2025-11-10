@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - PETCARE</title>
+    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="booking.css">
+    <style>
+        .admin-header {
+            background-color: #618264;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .filter-box {
+            margin: 20px auto;
+            max-width: 800px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+        .filter-box input {
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px auto;
+            max-width: 800px;
+        }
+        .stat-card {
+            background: #61876E;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            flex: 1;
+            margin: 0 10px;
+        }
+        .stat-card h3 {
+            margin: 0;
+            font-size: 2em;
+        }
+        .stat-card p {
+            margin: 5px 0 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <p class="log"><a href="index.html">🐕 PetCare</a></p>
+        <nav>
+            <ul class="nlinks">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contactus.html">Contact Us</a></li>
+                <li><a href="service.html">Services</a></li>
+                <li style="display: none;"><a href="admin.html">Admin</a></li>
+            </ul>
+        </nav>
+        <ul id="authLinks">
+            <li class="si"><span style="color: #618264;">Loading...</span></li>
+        </ul>
+    </header>
+    
+    <script src="auth.js"></script>
+
+    <div class="admin-header">
+        <h1>🐾 Admin Dashboard</h1>
+        <p>Manage all customer bookings</p>
+    </div>
+
+    <div class="stats">
+        <div class="stat-card">
+            <h3 id="totalBookings">0</h3>
+            <p>Total Bookings</p>
+        </div>
+        <div class="stat-card">
+            <h3 id="todayBookings">0</h3>
+            <p>Today's Bookings</p>
+        </div>
+        <div class="stat-card">
+            <h3 id="totalCustomers">0</h3>
+            <p>Total Customers</p>
+        </div>
+    </div>
+
+    <div class="filter-box">
+        <input type="text" id="searchInput" placeholder="Search by name, email, or pet type..." style="width: 70%;">
+        <button onclick="filterBookings()" style="padding: 8px 20px;">Search</button>
+        <button onclick="loadAllBookings()" style="padding: 8px 20px;">Show All</button>
+    </div>
+
+    <div class="container">
+        <h2>All Bookings</h2>
+        <table id="recordTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Pet Type</th>
+                    <th>Service ID</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="recordTableBody">
+                <!-- Records will be appended here -->
+            </tbody>
+        </table>
+    </div>
+
+    <div class="container" style="margin-top: 40px;">
+        <h2>Contact Messages</h2>
+        <table id="contactMessagesTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Subject</th>
+                    <th>Message</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody id="contactMessagesBody">
+                <!-- Contact messages will be appended here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        let allBookings = [];
+
+        // Protect admin page - require admin privileges
+        async function checkAdminAuth() {
+            const isAdminUser = await requireAdmin();
+            if (!isAdminUser) return false;
+            
+            // Update auth UI
+            await initAuthUI();
+            return true;
+        }
+
+        async function loadAllBookings() {
+            const authOk = await checkAdminAuth();
+            if (!authOk) return;
+
+            try {
+                const response = await fetch('/PETCARE-1.0.0/booking');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.bookings && Array.isArray(data.bookings)) {
+                        allBookings = data.bookings;
+                        displayBookings(allBookings);
+                        updateStats(allBookings);
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading bookings:', error);
+                alert('Failed to load bookings');
+            }
+        }
+
+        function displayBookings(bookings) {
+            const tableBody = document.getElementById('recordTableBody');
+            tableBody.innerHTML = '';
+            
+            bookings.forEach(booking => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${booking.id}</td>
+                    <td>${booking.name}</td>
+                    <td>${booking.email || 'N/A'}</td>
+                    <td>${booking.number || 'N/A'}</td>
+                    <td>${booking.petType || 'N/A'}</td>
+                    <td>${booking.serviceId || 0}</td>
+                    <td>
+                        <button class="delete" onclick="deleteBooking(${booking.id})">Delete</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function filterBookings() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = allBookings.filter(b => 
+                (b.name && b.name.toLowerCase().includes(searchTerm)) ||
+                (b.email && b.email.toLowerCase().includes(searchTerm)) ||
+                (b.petType && b.petType.toLowerCase().includes(searchTerm))
+            );
+            displayBookings(filtered);
+        }
+
+        function updateStats(bookings) {
+            document.getElementById('totalBookings').textContent = bookings.length;
+            
+            // Count unique email addresses as customers
+            const uniqueEmails = new Set(bookings.map(b => b.email).filter(e => e));
+            document.getElementById('totalCustomers').textContent = uniqueEmails.size;
+            
+            // Today's bookings (this would need timestamp in DB)
+            document.getElementById('todayBookings').textContent = '-';
+        }
+
+        async function deleteBooking(id) {
+            if (!confirm('Are you sure you want to delete this booking?')) return;
+            
+            try {
+                const response = await fetch('/PETCARE-1.0.0/booking', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({ id: id })
+                });
+                
+                const data = await response.json();
+                if (data.status === 'ok') {
+                    alert('Booking deleted successfully');
+                    loadAllBookings();
+                } else {
+                    alert('Failed to delete booking');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error deleting booking');
+            }
+        }
+
+        async function loadContactMessages() {
+            try {
+                const response = await fetch('/PETCARE-1.0.0/contact');
+                const data = await response.json();
+                
+                if (data.status === 'ok' && data.messages) {
+                    displayContactMessages(data.messages);
+                }
+            } catch (error) {
+                console.error('Error loading contact messages:', error);
+            }
+        }
+
+        function displayContactMessages(messages) {
+            const tbody = document.getElementById('contactMessagesBody');
+            tbody.innerHTML = '';
+            
+            if (messages.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No contact messages yet</td></tr>';
+                return;
+            }
+            
+            messages.forEach(msg => {
+                const row = document.createElement('tr');
+                const date = new Date(msg.createdAt);
+                row.innerHTML = `
+                    <td>${msg.id}</td>
+                    <td>${msg.name || '-'}</td>
+                    <td>${msg.email || '-'}</td>
+                    <td>${msg.subject || '-'}</td>
+                    <td style="max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${msg.message}">${msg.message}</td>
+                    <td>${date.toLocaleDateString()} ${date.toLocaleTimeString()}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Load bookings and contact messages on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllBookings();
+            loadContactMessages();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,279 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:wght@100&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+*{
+    box-sizing: border-box;
+    margin:0;
+    padding:0;
+    font-family: "Montserrat", sans-serif;
+}
+
+
+li,a{
+   
+    font-weight:700;
+    font-size: 16px;
+    text-decoration: none;
+    list-style-type: none;
+    color: white;
+}
+
+header{
+    display:flex;
+    justify-content: space-between ;
+    align-items: center;
+    background-color: #618264;
+    padding:20px 10px;
+    flex-wrap: wrap;
+}
+.nlinks li{
+    display:inline-block;
+    margin: 0px 25px;
+}
+.si{
+    display: inline-block;
+    padding: 0px 20px;
+}
+
+
+.nlinks li a:hover{
+    color:#003C43;
+    text-decoration: underline;
+}
+
+.si a:hover{
+    color: #003C43;
+    text-decoration: underline;
+}
+.log a:hover{
+    color:#003C43;
+}
+
+
+
+
+
+.pet-section{
+    
+      
+    background-color:#61876E;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+
+     
+}
+
+.pimage{
+   
+    display:flex;
+    align-items: flex-end;
+    justify-content: center;
+    flex-wrap: wrap;
+   
+ 
+}
+
+     img{
+ 
+   width: 400px;
+   
+}
+.ptitle{
+    margin: 80px 0;
+}
+.ptitle h1{
+    font-size: 4rem;
+}
+#G{
+    color: #F4CE14;
+
+}
+.ptitle p{
+    margin-top: 3px;
+    font-size: 15px;
+    font-weight: bold;
+    color:white;
+}
+
+
+
+.service{
+ text-align: center;
+ margin-top: 170px; 
+ border-radius:50%;
+}
+.service h1{
+    font-weight: bolder;
+    font-size: 4rem;
+    color:#91C788;
+}
+.pa p{
+    
+    display: inline-block;
+    margin:30px 20px;
+}
+
+
+.btn1{
+    margin-top: 15px;
+}
+
+.btn1{
+    
+   text-decoration: none;
+   color: #F9ED69;
+   padding: 10px 20px;
+   background: linear-gradient(to right,#4E6C50,#395144);
+   border-radius: 20px;
+}
+.btn1:hover{
+        text-decoration: underline;
+}
+.service-photo{
+    margin-top: 100px;      
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+  
+    
+}
+.pic1{
+    margin:0 10px;
+    transition: 1s;
+}
+.service-photo img{
+   
+    border-radius: 15px;
+    box-shadow:0 0 20px 2px rgba(0,0,0,.1) ;
+    width: 350px;
+    height: 300px;
+}
+.pic1:hover{
+    transform: scale(1);
+    z-index: 2;
+}
+
+
+.client-section{
+  height: auto;
+    margin-top: 100px;
+    background-color: #A6BB8D;
+}
+
+.client{
+    padding-top: 100px;
+    text-align: center;
+    font-size: 2rem;
+    color: #142850;
+}
+
+.reviews{
+    display:flex;
+    justify-content: center;
+    flex-wrap: wrap;
+
+}
+.card{
+
+    background-color: #EEEEEE;
+    width: 280px;
+    height: 430px;
+    margin: 100px;
+    border-radius: 15px;
+}
+.card-image{
+    background-color: #00ADB5;
+    height: 200px;
+    border-radius: 15px 15px 0 0;
+    
+}
+.card-image img{
+    width: 200px;
+    height:150px ;
+    border: 2px solid white;
+    margin:23px 0px 0px 30px;
+    border-radius: 50%;
+}
+
+.card p{
+    color:#0A6847;
+    font-size: 15px;
+    margin-top: 20px;
+    
+    font-weight:700;
+    line-height: 1.5;
+}
+.card:hover{
+    background-color: #F6F6F6;
+    transform: scale(1.20);
+    transition: all 1s ease;
+   
+}
+
+
+
+footer{
+    height: auto;
+    background-color: #E8DFCA;
+}
+.foot{
+  
+   
+    color:#3F72AF;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+   
+    
+}
+.Social a{
+    color: #3F72AF;
+}
+.ft{
+    margin:50px 100px;
+
+}
+
+.ft p{
+    font-weight: bold;
+    line-height: 1.8;
+    
+}
+hr.line {
+    border: none;
+    height: 2px;
+    background-color: black;
+    font-weight: bold;
+  }
+  .right{
+    text-align: center;
+    margin-top: 30px;
+  }
+
+
+
+  @media only screen and (max-width: 600px) {
+   
+    header {
+        flex-direction: column;
+        padding: 10px;
+      }
+    
+      .nlinks {
+        justify-content: center;
+        margin-top: 10px;
+      }
+      
+      .nlinks li {
+        margin: 10px;
+      }
+    
+      .si {
+        justify-content: center;
+        margin-top: 10px;
+      }
+  
+    }
+
+   

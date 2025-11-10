@@ -85,17 +85,12 @@ form{
                   <li><a href="about.html">About</a></li>
                   <li><a href="contactus.html">Contact Us</a></li>
                   <li><a href="service.html">Services</a></li>
-  
-  
-               
               </ul>
-              
           </nav>
-  <ul>
-  
-    
-      
-  </ul>
+          <ul>
+              <li class="si"><a href="signin.html">Sign in</a></li>
+              <li class="si"><a href="signup.html">Sign Up</a></li>
+          </ul>
       </header>
 
 
@@ -121,5 +116,42 @@ form{
     <span  class="psw"> <a style="color: rgba(0, 0, 0, 0.633);"  href="#">Forgot password?</a></span>
   </div>
 </form>
+
+<script>
+  document.querySelector('form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(e.target);
+    const username = formData.get('username');
+    const password = formData.get('password');
+    
+    try {
+      const response = await fetch('/PETCARE-1.0.0/signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({
+          username: username,
+          password: password
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (data.status === 'ok') {
+        // Check if there's a return URL (for redirecting back after login)
+        const urlParams = new URLSearchParams(window.location.search);
+        const returnUrl = urlParams.get('returnUrl') || 'service.html';
+        window.location.href = returnUrl;
+      } else {
+        alert(data.message || 'Invalid username or password. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred during sign in. Please try again.');
+    }
+  });
+</script>
 </body>
 </html>

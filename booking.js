@@ -3,28 +3,44 @@ document.addEventListener('DOMContentLoaded', function () {
   const tableBody = document.getElementById('recordTableBody');
   let editRow = null;
   
-  form.addEventListener('submit', function (event) {
-      event.preventDefault();
+    form.addEventListener('submit', function (event) {
+            event.preventDefault();
 
-      const name = document.getElementById('name').value;
-      const email = document.getElementById('email').value;
-      const number = document.getElementById('number').value;
-      const petType = document.getElementById('petType').value;
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const number = document.getElementById('number').value;
+            const petType = document.getElementById('petType').value;
 
-      if (editRow) {
-         
-          editRow.cells[0].textContent = name;
-          editRow.cells[1].textContent = email;
-          editRow.cells[2].textContent = number;
-          editRow.cells[3].textContent = petType;
-          editRow = null; 
-      } else {
-        
-          addRecord(name, email, number, petType);
-      }
+            // If editing locally, update row and do not POST as new
+            if (editRow) {
+                    editRow.cells[0].textContent = name;
+                    editRow.cells[1].textContent = email;
+                    editRow.cells[2].textContent = number;
+                    editRow.cells[3].textContent = petType;
+                    editRow = null;
+                    form.reset();
+                    return;
+            }
 
-      form.reset();
-  });
+            // POST to backend
+            fetch('/booking', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({ name, email, number, petType })
+            }).then(r => r.json())
+                .then(data => {
+                    if (data && data.status === 'ok') {
+                        addRecord(name, email, number, petType);
+                    } else {
+                        alert('Failed to save booking');
+                    }
+                    form.reset();
+                }).catch(err => {
+                    console.error(err);
+                    alert('Error saving booking');
+                    form.reset();
+                });
+    });
 
   function addRecord(name, email, number, petType) {
       const newRow = document.createElement('tr');

@@ -1,0 +1,26 @@
+## Build / IDE
+target/
+*.war
+*.class
+WEB-INF/
+.DS_Store
+.env
+.env.local
+.idea/
+.vscode/
+
+## Logs
+logs/
+*.log
+
+## macOS
+.Spotlight-V100
+.Trashes
+
+## Node
+node_modules/
+
+## Other
+.sass-cache/
+coverage/
+dist/
