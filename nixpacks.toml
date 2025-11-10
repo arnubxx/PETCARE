@@ -1,0 +1,9 @@
+# Railway Nixpacks configuration for Java Maven project
+[phases.setup]
+nixPkgs = ["...", "maven"]
+
+[phases.build]
+cmds = ["mvn clean package -DskipTests"]
+
+[start]
+cmd = "java -jar /usr/local/tomcat/bin/bootstrap.jar"
