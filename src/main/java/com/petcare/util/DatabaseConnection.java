@@ -14,10 +14,30 @@ public class DatabaseConnection implements Closeable {
     
     static {
         HikariConfig cfg = new HikariConfig();
-        String defaultUrl = "jdbc:mysql://localhost:3306/petcare?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
-        String jdbcUrl = System.getenv().getOrDefault("PETCARE_DB_URL", defaultUrl);
-        String dbUser = System.getenv().getOrDefault("PETCARE_DB_USER", "root");
-        String dbPassword = System.getenv().getOrDefault("PETCARE_DB_PASSWORD", "Arnubdatta");
+        
+        // Support both Railway and custom environment variables
+        String jdbcUrl;
+        String dbUser;
+        String dbPassword;
+        
+        // Check if Railway variables exist (Railway auto-provides these)
+        String mysqlHost = System.getenv("MYSQLHOST");
+        if (mysqlHost != null && !mysqlHost.isEmpty()) {
+            // Railway deployment - use their auto-provided variables
+            String mysqlPort = System.getenv().getOrDefault("MYSQLPORT", "3306");
+            String mysqlDatabase = System.getenv().getOrDefault("MYSQLDATABASE", "railway");
+            jdbcUrl = "jdbc:mysql://" + mysqlHost + ":" + mysqlPort + "/" + mysqlDatabase + 
+                      "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+            dbUser = System.getenv().getOrDefault("MYSQLUSER", "root");
+            dbPassword = System.getenv().getOrDefault("MYSQLPASSWORD", "");
+        } else {
+            // Local development or custom deployment
+            String defaultUrl = "jdbc:mysql://localhost:3306/petcare?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+            jdbcUrl = System.getenv().getOrDefault("PETCARE_DB_URL", defaultUrl);
+            dbUser = System.getenv().getOrDefault("PETCARE_DB_USER", "root");
+            dbPassword = System.getenv().getOrDefault("PETCARE_DB_PASSWORD", "Arnubdatta");
+        }
+        
         cfg.setDriverClassName("com.mysql.cj.jdbc.Driver");
         cfg.setJdbcUrl(jdbcUrl);
         cfg.setUsername(dbUser);
