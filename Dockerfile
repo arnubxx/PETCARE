@@ -24,8 +24,11 @@ RUN rm -rf /usr/local/tomcat/webapps/*
 # Copy the WAR file from builder stage
 COPY --from=builder /app/target/PETCARE-1.0.0.war /usr/local/tomcat/webapps/ROOT.war
 
-# Expose port 8080
+# Expose port 8080 (Railway will map this to their PORT)
 EXPOSE 8080
+
+# Set environment variable for Tomcat port
+ENV CATALINA_OPTS="-Dserver.port=${PORT:-8080}"
 
 # Start Tomcat
 CMD ["catalina.sh", "run"]
