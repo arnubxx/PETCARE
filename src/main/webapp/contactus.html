@@ -83,51 +83,6 @@
       </div>
 
 <script>
-function getContextPath() {
-    const path = window.location.pathname;
-    const contextEnd = path.indexOf('/', 1);
-    if (contextEnd === -1) {
-        return '';
-    }
-    const context = path.substring(0, contextEnd);
-    if (context.endsWith('.html') || context.endsWith('.jsp')) {
-        return '';
-    }
-    return context;
-}
-
-document.getElementById('contactForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const formData = new FormData(e.target);
-    const messageDiv = document.getElementById('contactFormMessage');
-    const contextPath = getContextPath();
-    
-    try {
-        const response = await fetch(`${contextPath}/contact`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: new URLSearchParams(formData)
-        });
-        
-        const data = await response.json();
-        
-        if (data.status === 'ok') {
-            messageDiv.style.display = 'block';
-            messageDiv.style.backgroundColor = '#d4edda';
-            messageDiv.style.color = '#155724';
-            messageDiv.style.border = '1px solid #c3e6cb';
-            messageDiv.textContent = data.message;
-            e.target.reset();
-        } else {
-            messageDiv.style.display = 'block';
-            messageDiv.style.backgroundColor = '#f8d7da';
-            messageDiv.style.color = '#721c24';
-            messageDiv.style.border = '1px solid #f5c6cb';
-            messageDiv.textContent = data.message || 'Failed to send message. Please try again.';
-        }
         
         setTimeout(() => {
             messageDiv.style.display = 'none';

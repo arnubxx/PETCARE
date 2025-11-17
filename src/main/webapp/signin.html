@@ -119,19 +119,6 @@ form{
 </form>
 
 <script>
-  function getContextPath() {
-    const path = window.location.pathname;
-    const contextEnd = path.indexOf('/', 1);
-    if (contextEnd === -1) {
-      return '';
-    }
-    const context = path.substring(0, contextEnd);
-    if (context.endsWith('.html') || context.endsWith('.jsp')) {
-      return '';
-    }
-    return context;
-  }
-
   document.querySelector('form').addEventListener('submit', async function(e) {
     e.preventDefault();
     
@@ -140,8 +127,7 @@ form{
     const password = formData.get('password');
     
     try {
-      const contextPath = getContextPath();
-      const response = await fetch(`${contextPath}/signin`, {
+      const response = await fetch('/signin', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'

@@ -122,19 +122,6 @@ form{
 </form>
 
 <script>
-  function getContextPath() {
-    const path = window.location.pathname;
-    const contextEnd = path.indexOf('/', 1);
-    if (contextEnd === -1) {
-      return '';
-    }
-    const context = path.substring(0, contextEnd);
-    if (context.endsWith('.html') || context.endsWith('.jsp')) {
-      return '';
-    }
-    return context;
-  }
-
   document.querySelector('form').addEventListener('submit', async function(e) {
     e.preventDefault();
     
@@ -154,8 +141,7 @@ form{
     }
     
     try {
-      const contextPath = getContextPath();
-      const response = await fetch(`${contextPath}/signup`, {
+      const response = await fetch('/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'

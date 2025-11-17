@@ -1,26 +1,12 @@
 const ADMIN_USERS = ['arnubdatta', 'admin'];
 
-function getContextPath() {
-    const path = window.location.pathname;
-    const contextEnd = path.indexOf('/', 1);
-    if (contextEnd === -1) {
-        return '';
-    }
-    const context = path.substring(0, contextEnd);
-    if (context.endsWith('.html') || context.endsWith('.jsp')) {
-        return '';
-    }
-    return context;
-}
-
 function isAdmin(username) {
     return ADMIN_USERS.includes(username.toLowerCase());
 }
 
 async function getCurrentUser() {
     try {
-        const contextPath = getContextPath();
-        const response = await fetch(`${contextPath}/whoami`);
+        const response = await fetch('/whoami');
         const data = await response.json();
         return data.loggedIn ? data : null;
     } catch (error) {
@@ -61,8 +47,7 @@ async function initAuthUI() {
 }
 
 function logout() {
-    const contextPath = getContextPath();
-    fetch(`${contextPath}/logout`)
+    fetch('/logout')
         .then(r => r.json())
         .then(data => {
             if (data.status === 'ok') {

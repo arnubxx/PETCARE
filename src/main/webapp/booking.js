@@ -1,15 +1,3 @@
-function getContextPath() {
-  const path = window.location.pathname;
-  const contextEnd = path.indexOf('/', 1);
-  if (contextEnd === -1) {
-    return '';
-  }
-  const context = path.substring(0, contextEnd);
-  if (context.endsWith('.html') || context.endsWith('.jsp')) {
-    return '';
-  }
-  return context;
-}
 
 document.addEventListener('DOMContentLoaded', function () {
   const form = document.getElementById('crudForm');
@@ -35,8 +23,8 @@ document.addEventListener('DOMContentLoaded', function () {
   
   async function checkAuth() {
     try {
-      const contextPath = getContextPath();
-      const response = await fetch(`${contextPath}/whoami`);
+      
+      const response = await fetch(`/whoami`);
       const data = await response.json();
       
       if (!data.loggedIn) {
@@ -59,8 +47,8 @@ document.addEventListener('DOMContentLoaded', function () {
   
   async function loadBookings() {
     try {
-      const contextPath = getContextPath();
-      const response = await fetch(`${contextPath}/booking`);
+      
+      const response = await fetch(`/booking`);
       if (response.ok) {
         const data = await response.json();
         if (data.bookings && Array.isArray(data.bookings)) {
@@ -82,10 +70,10 @@ document.addEventListener('DOMContentLoaded', function () {
 			const number = document.getElementById('number').value;
 			const petType = document.getElementById('petType').value;
 			const serviceId = document.getElementById('serviceId').value || '0';
-			const contextPath = getContextPath();
+			
 
 			if (editRow && editId) {
-					fetch(`${contextPath}/booking`, {
+					fetch(`/booking`, {
 							method: 'PUT',
 							headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 							body: new URLSearchParams({ id: editId, name, email, number, petType, serviceId })
@@ -109,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function () {
 					return;
 			}
 
-			fetch(`${contextPath}/booking`, {
+			fetch(`/booking`, {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 					body: new URLSearchParams({ name, email, number, petType, serviceId })
@@ -156,8 +144,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	  newRow.querySelector('.delete').addEventListener('click', function () {
 		  if (confirm('Are you sure you want to delete this booking?')) {
-			  const contextPath = getContextPath();
-			  fetch(`${contextPath}/booking`, {
+			  
+			  fetch(`/booking`, {
 				  method: 'DELETE',
 				  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 				  body: new URLSearchParams({ id: id })
@@ -178,8 +166,8 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function logout() {
-  const contextPath = getContextPath();
-  fetch(`${contextPath}/logout`)
+  
+  fetch(`/logout`)
 	.then(r => r.json())
 	.then(data => {
 	  if (data.status === 'ok') {
