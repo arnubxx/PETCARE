@@ -135,14 +135,18 @@
     </div>
 
     <script>
+        function getContextPath() {
+            const path = window.location.pathname;
+            const parts = path.split('/');
+            return parts.length > 1 && parts[1] ? '/' + parts[1] : '';
+        }
+
         let allBookings = [];
 
-        // Protect admin page - require admin privileges
         async function checkAdminAuth() {
             const isAdminUser = await requireAdmin();
             if (!isAdminUser) return false;
             
-            // Update auth UI
             await initAuthUI();
             return true;
         }
@@ -152,7 +156,8 @@
             if (!authOk) return;
 
             try {
-                const response = await fetch('/PETCARE-1.0.0/booking');
+                const contextPath = getContextPath();
+                const response = await fetch(`${contextPath}/booking`);
                 if (response.ok) {
                     const data = await response.json();
                     if (data.bookings && Array.isArray(data.bookings)) {
@@ -201,11 +206,9 @@
         function updateStats(bookings) {
             document.getElementById('totalBookings').textContent = bookings.length;
             
-            // Count unique email addresses as customers
             const uniqueEmails = new Set(bookings.map(b => b.email).filter(e => e));
             document.getElementById('totalCustomers').textContent = uniqueEmails.size;
             
-            // Today's bookings (this would need timestamp in DB)
             document.getElementById('todayBookings').textContent = '-';
         }
 
@@ -213,7 +216,8 @@
             if (!confirm('Are you sure you want to delete this booking?')) return;
             
             try {
-                const response = await fetch('/PETCARE-1.0.0/booking', {
+                const contextPath = getContextPath();
+                const response = await fetch(`${contextPath}/booking`, {
                     method: 'DELETE',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: new URLSearchParams({ id: id })
@@ -234,7 +238,8 @@
 
         async function loadContactMessages() {
             try {
-                const response = await fetch('/PETCARE-1.0.0/contact');
+                const contextPath = getContextPath();
+                const response = await fetch(`${contextPath}/contact`);
                 const data = await response.json();
                 
                 if (data.status === 'ok' && data.messages) {
@@ -269,7 +274,6 @@
             });
         }
 
-        // Load bookings and contact messages on page load
         document.addEventListener('DOMContentLoaded', function() {
             loadAllBookings();
             loadContactMessages();

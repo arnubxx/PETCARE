@@ -118,6 +118,12 @@ form{
 </form>
 
 <script>
+  function getContextPath() {
+    const path = window.location.pathname;
+    const parts = path.split('/');
+    return parts.length > 1 && parts[1] ? '/' + parts[1] : '';
+  }
+
   document.querySelector('form').addEventListener('submit', async function(e) {
     e.preventDefault();
     
@@ -126,7 +132,8 @@ form{
     const password = formData.get('password');
     
     try {
-      const response = await fetch('/PETCARE-1.0.0/signin', {
+      const contextPath = getContextPath();
+      const response = await fetch(`${contextPath}/signin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
@@ -140,7 +147,6 @@ form{
       const data = await response.json();
       
       if (data.status === 'ok') {
-        // Check if there's a return URL (for redirecting back after login)
         const urlParams = new URLSearchParams(window.location.search);
         const returnUrl = urlParams.get('returnUrl') || 'service.html';
         window.location.href = returnUrl;

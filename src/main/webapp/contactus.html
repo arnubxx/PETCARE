@@ -83,14 +83,21 @@
       </div>
 
 <script>
+function getContextPath() {
+    const path = window.location.pathname;
+    const parts = path.split('/');
+    return parts.length > 1 && parts[1] ? '/' + parts[1] : '';
+}
+
 document.getElementById('contactForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     
     const formData = new FormData(e.target);
     const messageDiv = document.getElementById('contactFormMessage');
+    const contextPath = getContextPath();
     
     try {
-        const response = await fetch('/PETCARE-1.0.0/contact', {
+        const response = await fetch(`${contextPath}/contact`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'

@@ -121,6 +121,12 @@ form{
 </form>
 
 <script>
+  function getContextPath() {
+    const path = window.location.pathname;
+    const parts = path.split('/');
+    return parts.length > 1 && parts[1] ? '/' + parts[1] : '';
+  }
+
   document.querySelector('form').addEventListener('submit', async function(e) {
     e.preventDefault();
     
@@ -129,7 +135,6 @@ form{
     const email = formData.get('email');
     const password = formData.get('password');
     
-    // Client-side validation
     if (password.length < 6) {
       alert('Password must be at least 6 characters long.');
       return;
@@ -141,7 +146,8 @@ form{
     }
     
     try {
-      const response = await fetch('/PETCARE-1.0.0/signup', {
+      const contextPath = getContextPath();
+      const response = await fetch(`${contextPath}/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'

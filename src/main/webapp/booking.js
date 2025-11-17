@@ -1,16 +1,18 @@
+function getContextPath() {
+  const path = window.location.pathname;
+  const parts = path.split('/');
+  return parts.length > 1 && parts[1] ? '/' + parts[1] : '';
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   const form = document.getElementById('crudForm');
   const tableBody = document.getElementById('recordTableBody');
   let editRow = null;
   let editId = null;
   
-  // Check authentication on page load
   checkAuth();
-  
-  // Load existing bookings
   loadBookings();
   
-  // Read URL parameters for service selection
   const urlParams = new URLSearchParams(window.location.search);
   const serviceId = urlParams.get('serviceId');
   const serviceName = urlParams.get('serviceName');
@@ -26,16 +28,15 @@ document.addEventListener('DOMContentLoaded', function () {
   
   async function checkAuth() {
     try {
-      const response = await fetch('/PETCARE-1.0.0/whoami');
+      const contextPath = getContextPath();
+      const response = await fetch(`${contextPath}/whoami`);
       const data = await response.json();
       
       if (!data.loggedIn) {
-        // Redirect to signin with return URL
         window.location.href = 'signin.html?returnUrl=booking.html';
         return;
       }
       
-      // Update header to show user is logged in
       const authLinks = document.getElementById('authLinks');
       if (authLinks && data.user) {
         authLinks.innerHTML = `
@@ -51,7 +52,8 @@ document.addEventListener('DOMContentLoaded', function () {
   
   async function loadBookings() {
     try {
-      const response = await fetch('/PETCARE-1.0.0/booking');
+      const contextPath = getContextPath();
+      const response = await fetch(`${contextPath}/booking`);
       if (response.ok) {
         const data = await response.json();
         if (data.bookings && Array.isArray(data.bookings)) {
@@ -73,10 +75,10 @@ document.addEventListener('DOMContentLoaded', function () {
 			const number = document.getElementById('number').value;
 			const petType = document.getElementById('petType').value;
 			const serviceId = document.getElementById('serviceId').value || '0';
+			const contextPath = getContextPath();
 
-			// If editing locally, update via PUT request
 			if (editRow && editId) {
-					fetch('/PETCARE-1.0.0/booking', {
+					fetch(`${contextPath}/booking`, {
 							method: 'PUT',
 							headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 							body: new URLSearchParams({ id: editId, name, email, number, petType, serviceId })
@@ -100,8 +102,7 @@ document.addEventListener('DOMContentLoaded', function () {
 					return;
 			}
 
-			// POST to backend
-			fetch('/PETCARE-1.0.0/booking', {
+			fetch(`${contextPath}/booking`, {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 					body: new URLSearchParams({ name, email, number, petType, serviceId })
@@ -148,7 +149,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	  newRow.querySelector('.delete').addEventListener('click', function () {
 		  if (confirm('Are you sure you want to delete this booking?')) {
-			  fetch('/PETCARE-1.0.0/booking', {
+			  const contextPath = getContextPath();
+			  fetch(`${contextPath}/booking`, {
 				  method: 'DELETE',
 				  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 				  body: new URLSearchParams({ id: id })
@@ -166,16 +168,11 @@ document.addEventListener('DOMContentLoaded', function () {
 		  }
 	  });
   }
-  
-  // Legacy function for backward compatibility
-  function addRecord(name, email, number, petType) {
-	addRecordToTable(null, name, email, number, petType);
-  }
 });
 
-// Global logout function
 function logout() {
-  fetch('/PETCARE-1.0.0/logout')
+  const contextPath = getContextPath();
+  fetch(`${contextPath}/logout`)
 	.then(r => r.json())
 	.then(data => {
 	  if (data.status === 'ok') {

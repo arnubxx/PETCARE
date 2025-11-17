@@ -1,15 +1,19 @@
-// Admin users list - add usernames here who should have admin access
 const ADMIN_USERS = ['arnubdatta', 'admin'];
 
-// Check if a username is an admin
+function getContextPath() {
+    const path = window.location.pathname;
+    const parts = path.split('/');
+    return parts.length > 1 && parts[1] ? '/' + parts[1] : '';
+}
+
 function isAdmin(username) {
     return ADMIN_USERS.includes(username.toLowerCase());
 }
 
-// Get current user info
 async function getCurrentUser() {
     try {
-        const response = await fetch('/PETCARE-1.0.0/whoami');
+        const contextPath = getContextPath();
+        const response = await fetch(`${contextPath}/whoami`);
         const data = await response.json();
         return data.loggedIn ? data : null;
     } catch (error) {
@@ -18,11 +22,9 @@ async function getCurrentUser() {
     }
 }
 
-// Initialize auth UI - call this on page load
 async function initAuthUI() {
     const user = await getCurrentUser();
     
-    // Update auth links in header
     const authLinks = document.getElementById('authLinks');
     if (authLinks) {
         if (user && user.loggedIn) {
@@ -38,15 +40,12 @@ async function initAuthUI() {
         }
     }
     
-    // Show/hide admin link based on user role
     const adminLink = document.querySelector('a[href="admin.html"]');
     if (adminLink) {
         const parentLi = adminLink.closest('li');
         if (user && user.loggedIn && isAdmin(user.user)) {
-            // User is admin - show the link
             if (parentLi) parentLi.style.display = 'list-item';
         } else {
-            // Not admin - hide the link
             if (parentLi) parentLi.style.display = 'none';
         }
     }
@@ -54,9 +53,9 @@ async function initAuthUI() {
     return user;
 }
 
-// Logout function
 function logout() {
-    fetch('/PETCARE-1.0.0/logout')
+    const contextPath = getContextPath();
+    fetch(`${contextPath}/logout`)
         .then(r => r.json())
         .then(data => {
             if (data.status === 'ok') {
@@ -69,7 +68,6 @@ function logout() {
         });
 }
 
-// Protect admin pages - call this on admin.html
 async function requireAdmin() {
     const user = await getCurrentUser();
     
