@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: petcare-app
+    env: docker
+    plan: free  # or starter, standard, etc.
+    dockerfilePath: ./Dockerfile
+    autoDeploy: true
+
+    envVars:
+      - key: PORT
+        value: 8080
