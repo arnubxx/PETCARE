@@ -2,8 +2,15 @@ const ADMIN_USERS = ['arnubdatta', 'admin'];
 
 function getContextPath() {
     const path = window.location.pathname;
-    const parts = path.split('/');
-    return parts.length > 1 && parts[1] ? '/' + parts[1] : '';
+    const contextEnd = path.indexOf('/', 1);
+    if (contextEnd === -1) {
+        return '';
+    }
+    const context = path.substring(0, contextEnd);
+    if (context.endsWith('.html') || context.endsWith('.jsp')) {
+        return '';
+    }
+    return context;
 }
 
 function isAdmin(username) {

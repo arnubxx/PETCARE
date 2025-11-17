@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="home.css">
 <style>
@@ -123,8 +124,15 @@ form{
 <script>
   function getContextPath() {
     const path = window.location.pathname;
-    const parts = path.split('/');
-    return parts.length > 1 && parts[1] ? '/' + parts[1] : '';
+    const contextEnd = path.indexOf('/', 1);
+    if (contextEnd === -1) {
+      return '';
+    }
+    const context = path.substring(0, contextEnd);
+    if (context.endsWith('.html') || context.endsWith('.jsp')) {
+      return '';
+    }
+    return context;
   }
 
   document.querySelector('form').addEventListener('submit', async function(e) {
