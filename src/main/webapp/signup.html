@@ -159,6 +159,13 @@ form{
         })
       });
       
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Server error:', response.status, errorText);
+        alert(`Registration failed: ${response.status} - ${errorText}`);
+        return;
+      }
+      
       const data = await response.json();
       
       if (data.status === 'ok') {
@@ -170,8 +177,8 @@ form{
         alert(data.message || 'Registration failed. Please try again.');
       }
     } catch (error) {
-      console.error('Error:', error);
-      alert('An error occurred during registration. Please try again.');
+      console.error('Error details:', error);
+      alert(`An error occurred during registration: ${error.message}. Please check the console and try again.`);
     }
   });
 </script>
