@@ -10,8 +10,14 @@ import com.zaxxer.hikari.HikariDataSource;
 public class DatabaseConnection implements Closeable {
 
     private static HikariDataSource dataSource;
+    private static boolean initialized = false;
+    private static Exception initException = null;
 
-    static {
+    private static synchronized void initialize() {
+        if (initialized) {
+            return;
+        }
+        
         try {
             HikariConfig config = new HikariConfig();
             
@@ -52,19 +58,27 @@ public class DatabaseConnection implements Closeable {
             config.setMaxLifetime(1800000);
 
             dataSource = new HikariDataSource(config);
+            initialized = true;
             
             System.out.println("Database connection pool initialized successfully");
             System.out.println("Connected to: " + jdbcUrl);
             
         } catch (Exception e) {
+            initException = e;
             System.err.println("Failed to initialize database connection pool: " + e.getMessage());
             e.printStackTrace();
-            throw new RuntimeException("Database initialization failed", e);
         }
     }
 
     public static Connection getConnection() throws SQLException {
+        if (!initialized) {
+            initialize();
+        }
+        
         if (dataSource == null) {
+            if (initException != null) {
+                throw new SQLException("Database initialization failed: " + initException.getMessage(), initException);
+            }
             throw new SQLException("DataSource not initialized");
         }
         return dataSource.getConnection();
