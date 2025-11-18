@@ -1,3 +1,10 @@
+function getApiUrl(endpoint) {
+  const currentPath = window.location.pathname;
+  if (currentPath.includes('/PETCARE-1.0.0/')) {
+    return '/PETCARE-1.0.0' + endpoint;
+  }
+  return endpoint;
+}
 
 document.addEventListener('DOMContentLoaded', function () {
   const form = document.getElementById('crudForm');
@@ -23,8 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
   
   async function checkAuth() {
     try {
-      
-      const response = await fetch(`/whoami`);
+      const response = await fetch(getApiUrl('/whoami'));
       const data = await response.json();
       
       if (!data.loggedIn) {
@@ -47,8 +53,7 @@ document.addEventListener('DOMContentLoaded', function () {
   
   async function loadBookings() {
     try {
-      
-      const response = await fetch(`/booking`);
+      const response = await fetch(getApiUrl('/booking'));
       if (response.ok) {
         const data = await response.json();
         if (data.bookings && Array.isArray(data.bookings)) {
@@ -73,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function () {
 			
 
 			if (editRow && editId) {
-					fetch(`/booking`, {
+					fetch(getApiUrl('/booking'), {
 							method: 'PUT',
 							headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 							body: new URLSearchParams({ id: editId, name, email, number, petType, serviceId })
@@ -97,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function () {
 					return;
 			}
 
-			fetch(`/booking`, {
+			fetch(getApiUrl('/booking'), {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 					body: new URLSearchParams({ name, email, number, petType, serviceId })
@@ -144,8 +149,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	  newRow.querySelector('.delete').addEventListener('click', function () {
 		  if (confirm('Are you sure you want to delete this booking?')) {
-			  
-			  fetch(`/booking`, {
+			  fetch(getApiUrl('/booking'), {
 				  method: 'DELETE',
 				  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 				  body: new URLSearchParams({ id: id })
@@ -166,8 +170,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function logout() {
-  
-  fetch(`/logout`)
+  fetch(getApiUrl('/logout'))
 	.then(r => r.json())
 	.then(data => {
 	  if (data.status === 'ok') {

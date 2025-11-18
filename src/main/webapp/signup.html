@@ -122,6 +122,14 @@ form{
 </form>
 
 <script>
+  function getApiUrl(endpoint) {
+    const currentPath = window.location.pathname;
+    if (currentPath.includes('/PETCARE-1.0.0/')) {
+      return '/PETCARE-1.0.0' + endpoint;
+    }
+    return endpoint;
+  }
+
   document.querySelector('form').addEventListener('submit', async function(e) {
     e.preventDefault();
     
@@ -141,7 +149,7 @@ form{
     }
     
     try {
-      const response = await fetch('/signup', {
+      const response = await fetch(getApiUrl('/signup'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'

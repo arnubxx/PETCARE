@@ -1,12 +1,20 @@
 const ADMIN_USERS = ['arnubdatta', 'admin'];
 
+function getApiUrl(endpoint) {
+    const currentPath = window.location.pathname;
+    if (currentPath.includes('/PETCARE-1.0.0/')) {
+        return '/PETCARE-1.0.0' + endpoint;
+    }
+    return endpoint;
+}
+
 function isAdmin(username) {
     return ADMIN_USERS.includes(username.toLowerCase());
 }
 
 async function getCurrentUser() {
     try {
-        const response = await fetch('/whoami');
+        const response = await fetch(getApiUrl('/whoami'));
         const data = await response.json();
         return data.loggedIn ? data : null;
     } catch (error) {
@@ -47,7 +55,7 @@ async function initAuthUI() {
 }
 
 function logout() {
-    fetch('/logout')
+    fetch(getApiUrl('/logout'))
         .then(r => r.json())
         .then(data => {
             if (data.status === 'ok') {
