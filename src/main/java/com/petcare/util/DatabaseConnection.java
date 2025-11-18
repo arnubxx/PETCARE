@@ -4,70 +4,80 @@ import java.io.Closeable;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import javax.sql.DataSource;
-
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 public class DatabaseConnection implements Closeable {
-    private static HikariDataSource ds;
-    
+
+    private static HikariDataSource dataSource;
+
     static {
-        HikariConfig cfg = new HikariConfig();
-        
-        // Support Render.com, Railway, and custom environment variables
-        String jdbcUrl;
-        String dbUser;
-        String dbPassword;
-        
-        // Check if Render.com variables exist (DB_HOST is common for Render)
-        String dbHost = System.getenv("DB_HOST");
-        if (dbHost != null && !dbHost.isEmpty()) {
-            // Render.com deployment - use DB_HOST, DB_PORT, DB_NAME
-            String dbPort = System.getenv().getOrDefault("DB_PORT", "3306");
-            String dbName = System.getenv().getOrDefault("DB_NAME", "petcare");
-            jdbcUrl = "jdbc:mysql://" + dbHost + ":" + dbPort + "/" + dbName + 
-                      "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
-            dbUser = System.getenv().getOrDefault("DB_USER", "root");
-            dbPassword = System.getenv().getOrDefault("DB_PASSWORD", "");
-        } else {
-            // Check if Railway variables exist
-            String mysqlHost = System.getenv("MYSQLHOST");
-            if (mysqlHost != null && !mysqlHost.isEmpty()) {
-                // Railway deployment - use their auto-provided variables
-                String mysqlPort = System.getenv().getOrDefault("MYSQLPORT", "3306");
-                String mysqlDatabase = System.getenv().getOrDefault("MYSQLDATABASE", "railway");
-                jdbcUrl = "jdbc:mysql://" + mysqlHost + ":" + mysqlPort + "/" + mysqlDatabase + 
-                          "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
-                dbUser = System.getenv().getOrDefault("MYSQLUSER", "root");
-                dbPassword = System.getenv().getOrDefault("MYSQLPASSWORD", "");
-            } else {
-                // Local development
-                String defaultUrl = "jdbc:mysql://localhost:3306/petcare?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
-                jdbcUrl = System.getenv().getOrDefault("PETCARE_DB_URL", defaultUrl);
-                dbUser = System.getenv().getOrDefault("PETCARE_DB_USER", "root");
-                dbPassword = System.getenv().getOrDefault("PETCARE_DB_PASSWORD", "Arnubdatta");
+        try {
+            HikariConfig config = new HikariConfig();
+            
+            String dbHost = System.getenv("MYSQLHOST");
+            String dbPort = System.getenv("MYSQLPORT");
+            String dbName = System.getenv("MYSQLDATABASE");
+            String dbUser = System.getenv("MYSQLUSER");
+            String dbPass = System.getenv("MYSQLPASSWORD");
+
+            if (dbHost == null || dbHost.isEmpty()) {
+                dbHost = System.getenv("DB_HOST");
+                dbPort = System.getenv("DB_PORT");
+                dbName = System.getenv("DB_NAME");
+                dbUser = System.getenv("DB_USER");
+                dbPass = System.getenv("DB_PASSWORD");
             }
+
+            if (dbHost == null || dbHost.isEmpty()) {
+                dbHost = "localhost";
+                dbPort = "3306";
+                dbName = "petcare";
+                dbUser = "root";
+                dbPass = "Arnubdatta";
+            }
+
+            String jdbcUrl = String.format("jdbc:mysql://%s:%s/%s?useSSL=true&serverTimezone=UTC&allowPublicKeyRetrieval=true",
+                    dbHost, dbPort, dbName);
+
+            config.setJdbcUrl(jdbcUrl);
+            config.setUsername(dbUser);
+            config.setPassword(dbPass);
+            config.setDriverClassName("com.mysql.cj.jdbc.Driver");
+            
+            config.setMaximumPoolSize(10);
+            config.setMinimumIdle(2);
+            config.setConnectionTimeout(30000);
+            config.setIdleTimeout(600000);
+            config.setMaxLifetime(1800000);
+
+            dataSource = new HikariDataSource(config);
+            
+            System.out.println("Database connection pool initialized successfully");
+            System.out.println("Connected to: " + jdbcUrl);
+            
+        } catch (Exception e) {
+            System.err.println("Failed to initialize database connection pool: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Database initialization failed", e);
         }
-        
-        cfg.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        cfg.setJdbcUrl(jdbcUrl);
-        cfg.setUsername(dbUser);
-        cfg.setPassword(dbPassword);
-        cfg.setMaximumPoolSize(10);
-        cfg.setMinimumIdle(2);
-        cfg.setPoolName("petcare-pool");
-        ds = new HikariDataSource(cfg);
     }
 
     public static Connection getConnection() throws SQLException {
-        return ds.getConnection();
+        if (dataSource == null) {
+            throw new SQLException("DataSource not initialized");
+        }
+        return dataSource.getConnection();
     }
 
-    public static DataSource getDataSource() { return ds; }
+    public static void closeDataSource() {
+        if (dataSource != null && !dataSource.isClosed()) {
+            dataSource.close();
+        }
+    }
 
     @Override
     public void close() {
-        if (ds != null) ds.close();
+        closeDataSource();
     }
 }
